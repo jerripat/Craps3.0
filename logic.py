@@ -70,16 +70,41 @@ def create_game_table():
 # Call the function to create the table and add the initial record
 #create_game_table()
 
-def insert_into_games(game_id, wager, win, loss, score):
+def insert_into_games(game_id, wager, win, loss, score, game_point):
     """Insert a new game record into the Games table."""
     conn = sqlite3.connect("Main.db")
     cursor = conn.cursor()
 
     cursor.execute("""
-        INSERT INTO Games (game_id, wager, win, loss, score)
-        VALUES (?,?,?,?,?)
-    """, (game_id, wager, win, loss, score))
+        INSERT INTO Games (game_id, wager, win, loss, score,game_point)
+        VALUES (?,?,?,?,?,?)
+    """, (game_id, wager, win, loss, score, game_point))
 
     conn.commit()  # Commit the changes
     conn.close()
 
+def get_game_counter():
+    """Retrieve the current game counter from the GameCounter table."""
+    conn = sqlite3.connect("Main.db")
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT counter FROM GameCounter LIMIT 1")
+    result = cursor.fetchone()
+
+    if result is None:
+        # If the table is empty, set the counter to 1
+        cursor.execute("INSERT INTO GameCounter (counter) VALUES (1)")
+        conn.commit()  # Commit the insertion
+        counter = 1
+    else:
+        # Retrieve the current counter value
+        counter = result[0]
+
+    # Increment the counter
+    cursor.execute("UPDATE GameCounter SET counter = counter + 1")
+    conn.commit()  # Commit the update
+
+    # Close the connection
+    conn.close()
+
+    return counter
