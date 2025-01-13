@@ -33,3 +33,53 @@ def get_game_id():
     conn.close()
 
     return game_id
+
+import sqlite3
+
+import sqlite3
+
+def create_game_table():
+    """Create the Games table and insert an initial game record."""
+    conn = sqlite3.connect("Main.db")
+    cursor = conn.cursor()
+
+    # Drop the table if it already exists
+    #cursor.execute("DROP TABLE IF EXISTS Games")
+
+    # Create the Games table with the correct schema
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS Games (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            game_id INTEGER,
+            wager REAL,
+            win REAL, 
+            loss REAL,
+            score INTEGER
+        )
+    """)
+
+    # Insert a new game entry with default values
+    cursor.execute("""
+        INSERT INTO Games (game_id, wager, win, loss, score)
+        VALUES (?, ?, ?, ?, ?)
+    """, (300, 100, 0, 0, 0))  # Adjusted to match the column count
+
+    conn.commit()  # Commit the changes
+    conn.close()
+
+# Call the function to create the table and add the initial record
+#create_game_table()
+
+def insert_into_games(game_id, wager, win, loss, score):
+    """Insert a new game record into the Games table."""
+    conn = sqlite3.connect("Main.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        INSERT INTO Games (game_id, wager, win, loss, score)
+        VALUES (?,?,?,?,?)
+    """, (game_id, wager, win, loss, score))
+
+    conn.commit()  # Commit the changes
+    conn.close()
+
